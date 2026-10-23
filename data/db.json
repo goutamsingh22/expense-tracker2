@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "name": "My Budget",
+    "currency": "INR",
+    "theme": "dark",
+    "monthStartDay": 1
+  },
+  "categories": [],
+  "transactions": [],
+  "budgets": [],
+  "goals": []
+}

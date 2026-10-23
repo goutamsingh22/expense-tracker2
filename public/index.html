@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ledger — Personal Expense & Budget Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app" id="app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <span class="brand-name" id="brand-name">Ledger</span>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="transactions">
+          <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <span>Transactions</span>
+        </button>
+        <button class="nav-item" data-view="budgets">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Budgets</span>
+          <span class="nav-badge hidden" id="budget-alert-badge">!</span>
+        </button>
+        <button class="nav-item" data-view="goals">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>Goals</span>
+        </button>
+        <button class="nav-item" data-view="analytics">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" data-view="categories">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span>Categories</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="mini-balance">
+          <span class="mini-label">All-time balance</span>
+          <span class="mini-value" id="sidebar-balance">—</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+      <header class="topbar">
+        <button class="btn-icon menu-toggle" id="menu-toggle" title="Menu">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h1 id="view-title">Dashboard</h1>
+          <span class="topbar-sub" id="view-sub">Overview of your money</span>
+        </div>
+        <div class="topbar-actions">
+          <div class="month-picker" id="month-picker">
+            <button class="btn-icon" id="month-prev" title="Previous month">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="month-label" id="month-label">—</span>
+            <button class="btn-icon" id="month-next" title="Next month">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <button class="btn btn-primary" id="add-tx-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add</span>
+          </button>
+          <button class="btn-icon theme-toggle" id="theme-toggle" title="Toggle theme">
+            <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content" id="content">
+
+        <!-- ============ DASHBOARD ============ -->
+        <section class="view active" id="view-dashboard">
+          <div class="stat-grid" id="stat-grid"></div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Cash flow</h3>
+                <div class="legend">
+                  <span class="legend-item"><i class="dot dot-income"></i>Income</span>
+                  <span class="legend-item"><i class="dot dot-expense"></i>Expense</span>
+                </div>
+              </div>
+              <div class="chart" id="chart-trend"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Spending by category</h3>
+                <span class="card-sub" id="breakdown-total"></span>
+              </div>
+              <div class="donut-wrap">
+                <div class="chart donut" id="chart-donut"></div>
+                <div class="donut-legend" id="donut-legend"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Budget status</h3>
+                <button class="link-btn" data-goto="budgets">Manage</button>
+              </div>
+              <div id="dash-budgets" class="stack"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Recent transactions</h3>
+                <button class="link-btn" data-goto="transactions">View all</button>
+              </div>
+              <div id="dash-recent" class="stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TRANSACTIONS ============ -->
+        <section class="view" id="view-transactions">
+          <div class="card">
+            <div class="filters">
+              <div class="field field-search">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="f-q" placeholder="Search note, category, amount…" autocomplete="off">
+              </div>
+              <select id="f-type">
+                <option value="">All types</option>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+              <select id="f-category"><option value="">All categories</option></select>
+              <input type="date" id="f-from" title="From date">
+              <input type="date" id="f-to" title="To date">
+              <button class="btn btn-ghost" id="f-reset">Reset</button>
+            </div>
+
+            <div class="table-summary" id="tx-summary"></div>
+
+            <div class="table-wrap">
+              <table class="table" id="tx-table">
+                <thead>
+                  <tr>
+                    <th data-sort="date">Date</th>
+                    <th data-sort="category">Category</th>
+                    <th>Note</th>
+                    <th data-sort="amount" class="num">Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tx-body"></tbody>
+              </table>
+              <div class="empty" id="tx-empty">
+                <p>No transactions match your filters</p>
+                <button class="btn btn-primary" id="tx-empty-add">Add your first transaction</button>
+              </div>
+            </div>
+
+            <div class="pager" id="tx-pager"></div>
+          </div>
+        </section>
+
+        <!-- ============ BUDGETS ============ -->
+        <section class="view" id="view-budgets">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Monthly budgets</h3>
+                <span class="card-sub" id="budget-month-label"></span>
+              </div>
+              <div id="budget-list" class="stack"></div>
+              <div class="empty" id="budget-empty">
+                <p>No budgets yet. Set limits to control spending.</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3 id="budget-form-title">Add budget</h3></div>
+              <form id="budget-form" class="form">
+                <label>Category
+                  <select id="b-category" required></select>
+                </label>
+                <label>Monthly limit
+                  <input type="number" id="b-amount" min="0.01" step="0.01" placeholder="0.00" required>
+                </label>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save budget</button>
+                  <button type="button" class="btn btn-ghost hidden" id="budget-cancel">Cancel</button>
+                </div>
+                <input type="hidden" id="b-id">
+              </form>
+              <div class="tip-box">
+                <strong>Tip</strong>
+                <p>Budgets reset automatically every month. Over-budget categories show a red badge on the sidebar.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ GOALS ============ -->
+        <section class="view" id="view-goals">
+          <div class="grid-2">
+            <div>
+              <div id="goals-list" class="stack"></div>
+              <div class="empty" id="goals-empty"><p>No savings goals yet.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3 id="goal-form-title">New savings goal</h3></div>
+              <form id="goal-form" class="form">
+                <label>Goal name
+                  <input type="text" id="g-name" placeholder="e.g. Emergency fund" maxlength="60" required>
+                </label>
+                <label>Target amount
+                  <input type="number" id="g-target" min="0.01" step="0.01" placeholder="0.00" required>
+                </label>
+                <label>Deadline <span class="optional">(optional)</span>
+                  <input type="date" id="g-deadline">
+                </label>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save goal</button>
+                  <button type="button" class="btn btn-ghost hidden" id="goal-cancel">Cancel</button>
+                </div>
+                <input type="hidden" id="g-id">
+              </form>
+              <div class="tip-box">
+                <strong>Contributions</strong>
+                <p>Log deposits into a goal to track progress. Contributions are separate from transactions.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ANALYTICS ============ -->
+        <section class="view" id="view-analytics">
+          <div class="stat-grid" id="analytics-stats"></div>
+          <div class="card">
+            <div class="card-head">
+              <h3>Income vs expense</h3>
+              <select id="trend-range">
+                <option value="6">Last 6 months</option>
+                <option value="12">Last 12 months</option>
+                <option value="24">Last 24 months</option>
+              </select>
+            </div>
+            <div class="chart chart-tall" id="chart-months"></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head">
+                <h3>Daily spending</h3>
+                <span class="card-sub" id="daily-sub"></span>
+              </div>
+              <div class="chart" id="chart-daily"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Category breakdown</h3></div>
+              <div id="analytics-breakdown" class="stack"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Top expenses</h3></div>
+            <div id="top-expenses" class="stack"></div>
+          </div>
+        </section>
+
+        <!-- ============ CATEGORIES ============ -->
+        <section class="view" id="view-categories">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Your categories</h3></div>
+              <div class="cat-columns">
+                <div>
+                  <h4 class="col-title">Expense</h4>
+                  <div id="cat-expense" class="stack"></div>
+                </div>
+                <div>
+                  <h4 class="col-title">Income</h4>
+                  <div id="cat-income" class="stack"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3 id="cat-form-title">Add category</h3></div>
+              <form id="cat-form" class="form">
+                <label>Name
+                  <input type="text" id="c-name" placeholder="e.g. Pets" maxlength="40" required>
+                </label>
+                <label>Type
+                  <select id="c-type">
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </select>
+                </label>
+                <label>Color
+                  <div class="color-row" id="c-color-row"></div>
+                </label>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save category</button>
+                  <button type="button" class="btn btn-ghost hidden" id="cat-cancel">Cancel</button>
+                </div>
+                <input type="hidden" id="c-id">
+                <input type="hidden" id="c-color" value="#6366f1">
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SETTINGS ============ -->
+        <section class="view" id="view-settings">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Preferences</h3></div>
+              <form id="settings-form" class="form">
+                <label>Budget name
+                  <input type="text" id="s-name" maxlength="50" placeholder="My Budget">
+                </label>
+                <label>Currency
+                  <select id="s-currency">
+                    <option>INR</option><option>USD</option><option>EUR</option><option>GBP</option>
+                    <option>JPY</option><option>CAD</option><option>AUD</option><option>CHF</option>
+                    <option>CNY</option><option>BRL</option><option>ZAR</option><option>NGN</option>
+                    <option>KES</option><option>PKR</option><option>BDT</option><option>LKR</option>
+                  </select>
+                </label>
+                <label>Theme
+                  <div class="seg" id="s-theme">
+                    <button type="button" data-theme-val="dark">Dark</button>
+                    <button type="button" data-theme-val="light">Light</button>
+                  </div>
+                </label>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save preferences</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Data</h3></div>
+              <div class="data-actions">
+                <div class="data-row">
+                  <div>
+                    <strong>Export CSV</strong>
+                    <p>Download all transactions as CSV.</p>
+                  </div>
+                  <a class="btn btn-ghost" href="/api/export/csv">Export</a>
+                </div>
+                <div class="data-row">
+                  <div>
+                    <strong>Import CSV</strong>
+                    <p>Columns: date, type, amount, category, note.</p>
+                  </div>
+                  <label class="btn btn-ghost file-btn">
+                    Import
+                    <input type="file" id="csv-input" accept=".csv,text/csv" hidden>
+                  </label>
+                </div>
+                <div class="data-row">
+                  <div>
+                    <strong>Backup</strong>
+                    <p>Full JSON backup of your data.</p>
+                  </div>
+                  <a class="btn btn-ghost" href="/api/export/backup">Download</a>
+                </div>
+                <div class="data-row">
+                  <div>
+                    <strong>Restore</strong>
+                    <p>Replace data with a JSON backup.</p>
+                  </div>
+                  <label class="btn btn-ghost file-btn">
+                    Restore
+                    <input type="file" id="backup-input" accept=".json,application/json" hidden>
+                  </label>
+                </div>
+                <div class="data-row danger">
+                  <div>
+                    <strong>Reset data</strong>
+                    <p>Delete everything and start fresh.</p>
+                  </div>
+                  <button class="btn btn-danger" id="reset-btn">Reset</button>
+                </div>
+                <div class="data-row">
+                  <div>
+                    <strong>Load sample data</strong>
+                    <p>Restore the demo transactions.</p>
+                  </div>
+                  <button class="btn btn-ghost" id="sample-btn">Load</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>About</h3></div>
+            <div class="about-grid" id="about-grid"></div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ TRANSACTION MODAL ============ -->
+  <div class="modal-backdrop" id="tx-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="tx-modal-title">Add transaction</h3>
+        <button class="btn-icon" data-close><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <form id="tx-form" class="form">
+        <div class="seg seg-type" id="tx-type">
+          <button type="button" data-type="expense" class="active">Expense</button>
+          <button type="button" data-type="income">Income</button>
+        </div>
+        <label>Amount
+          <div class="amount-input">
+            <span id="amount-currency">₹</span>
+            <input type="number" id="t-amount" min="0.01" step="0.01" placeholder="0.00" required autofocus>
+          </div>
+        </label>
+        <div class="grid-2-form">
+          <label>Category
+            <select id="t-category" required></select>
+          </label>
+          <label>Date
+            <input type="date" id="t-date" required>
+          </label>
+        </div>
+        <label>Note <span class="optional">(optional)</span>
+          <input type="text" id="t-note" placeholder="e.g. Grocery run" maxlength="200">
+        </label>
+        <label>Payment method
+          <select id="t-method">
+            <option value="card">Card</option>
+            <option value="cash">Cash</option>
+            <option value="bank">Bank transfer</option>
+            <option value="wallet">Wallet</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="tx-submit">Add transaction</button>
+          <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ CONFIRM MODAL ============ -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal modal-sm">
+      <div class="modal-head">
+        <h3 id="confirm-title">Are you sure?</h3>
+        <button class="btn-icon" data-close><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <p class="confirm-msg" id="confirm-msg"></p>
+      <div class="form-actions">
+        <button class="btn btn-danger" id="confirm-yes">Delete</button>
+        <button class="btn btn-ghost" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONTRIBUTION MODAL ============ -->
+  <div class="modal-backdrop" id="contrib-modal">
+    <div class="modal modal-sm">
+      <div class="modal-head">
+        <h3 id="contrib-title">Add contribution</h3>
+        <button class="btn-icon" data-close><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <form id="contrib-form" class="form">
+        <label>Amount
+          <input type="number" id="contrib-amount" min="0.01" step="0.01" placeholder="0.00" required>
+        </label>
+        <label>Date
+          <input type="date" id="contrib-date" required>
+        </label>
+        <input type="hidden" id="contrib-goal-id">
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toast-wrap"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
