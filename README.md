@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Expense Tracker
 
 A dependency-free Python command-line expense tracker backed by SQLite. Record
@@ -134,6 +134,4 @@ python main.py --db data\demo.db add 42 -c "Food & Dining"
 > Note: this directory also contains an earlier Node.js web prototype
 > (`server.js`, `public/`, `package.json`). The Python application described
 > above is independent and does not require Node.js.
-=======
-# expense-tracker2
->>>>>>> b8d26c147bf4a67a1412d3c23c5822ab130a2dc1
+
